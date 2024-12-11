@@ -4,12 +4,110 @@
     <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rate me baby</title>
+    <title>ratemebaby.com</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="pildid/rmbfavicon.png" type="image/x-icon">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #ffe6f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        img {
+            border-radius: 10px;
+        }
+
+        .button {
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #ff85c2;
+        }
+
+        .top-right {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex; /* Arrange items horizontally */
+            align-items: center; /* Vertically center items */
+        }
+
+        .top-right img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .top-right img:hover {
+            transform: scale(1.1);
+        }
+
+        .logout-text {
+            color: #0066cc; /* Blue color */
+            text-decoration: underline;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 10px; /* Add spacing between user icon and text */
+        }
+
+        .logout-text:hover {
+            color: #004499; /* Darker blue on hover */
+        }
+
+        .top-right .btn {
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .top-right .btn:hover {
+            background-color: #ff85c2;
+        }
+    </style>
 </head>
 <body>
-    <h1>Rate me baby</h1>
-    <img src="https://www.irishtimes.com/resizer/v2/EXVNGUDG22LCTJ5FNXXVIYHNSE.jpg?auth=6cbac398525daa033c1728ee1fb1bf1a1e52789c58c4222821c1467a4e3b24e3&smart=true&width=1024&height=576" alt="Kohtingulehed" width="500" height="300">
+    <div class="top-right" id="top-right"></div>
+    <script src="header.js"></script>
+
+    <img src="pildid/rmblogo.png" alt="rmblogo" width="500" height="300">
     <br><br>
-    <button onclick="location.href='vaheleht1.html'">Liigu järgmisele lehele</button>
+    <button class="button" onclick="location.href='postitused.html'">Postitused</button>
+
+    <!-- No static user icon here anymore. JavaScript will handle it. -->
+
+    <script>
+        // Check if a user is logged in
+        const loggedInUser = localStorage.getItem('loggedInUser');
+
+        // If logged in, display user icon in the top-right corner
+        if (loggedInUser) {
+            const userIcon = document.getElementById('user-icon');
+            userIcon.addEventListener('click', function() {
+                window.location.href = 'profile.html'; // Redirect to the profile page
+            });
+        }
+    </script>
 </body>
 </html>

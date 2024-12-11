@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postitused</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="pildid/rmbfavicon.png" type="image/x-icon">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffe6f2;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #ff69b4;
+            color: white;
+            font-size: 24px;
+        }
+
+        .feed-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .post {
+            background-color: #fff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* Post Image Styles */
+        .post img {
+            width: 100%;
+            height: auto;
+            max-height: 400px; /* Prevents excessive height */
+            object-fit: cover; /* Ensures the image covers the space without distortion */
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .post p {
+            font-size: 16px;
+        }
+
+        /* Comment Section Styles */
+        .comment-section {
+            margin-top: 20px;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            font-size: 14px;
+        }
+
+        .comment-list {
+            margin-top: 10px;
+        }
+
+        .comment {
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        /* Horizontal line to separate the comment section */
+        .comment-line {
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+
+        /* Delete Button for the Post Owner */
+        .delete-post-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            color: #ff4d4d;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .delete-post-button .cross {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .delete-post-button:hover {
+            color: #ff3333;
+        }
+
+        /* New Post Button Styles */
+        .new-post-button {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            z-index: 1000;
+        }
+
+        .new-post-button .plus {
+            font-size: 30px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .new-post-button span {
+            margin-left: 8px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Enabled Button Styles */
+        .enabled .plus {
+            background-color: white;
+            color: #ff69b4;
+            border: 2px solid #ff69b4;
+        }
+
+        .enabled:hover .plus {
+            background-color: #ff69b4;
+            color: white;
+        }
+
+        .enabled span {
+            color: #ff69b4;
+        }
+
+        /* Disabled Button Styles */
+        .disabled .plus {
+            background-color: #ddd;
+            color: #999;
+            border: 2px solid #ccc;
+            cursor: not-allowed;
+        }
+
+        .disabled span {
+            color: #999;
+        }
+
+        .disabled:hover::after {
+            content: "Logi sisse, et luua postitust";
+            position: absolute;
+            top: 50px;
+            left: 70px;
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        /* New Styles for "Postita Kommentaar" Button */
+        .postita-kommentaar {
+            background-color: #b497d6; /* Light purple color */
+            color: white;
+            border: none;
+            border-radius: 25px; /* Bubbly shape */
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .postita-kommentaar:hover {
+            background-color: #9e80c9; /* Darker purple on hover */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Postitused
+    </header>
+
+    <div class="feed-container" id="feedContainer">
+        <!-- Dynamic posts will be loaded here -->
+    </div>
+
+    <!-- New Post Button -->
+    <a id="newPostButton" class="new-post-button disabled" href="javascript:void(0)">
+        <div class="plus">+</div>
+        <span>Loo Postitus</span>
+    </a>
+
+    <script>
+        // Simulate user login state
+        const isLoggedIn = localStorage.getItem('loggedInUser'); // Check if a user is logged in
+        const newPostButton = document.getElementById('newPostButton');
+        const feedContainer = document.getElementById('feedContainer');
+        
+        // Check login status
+        if (isLoggedIn) {
+            newPostButton.classList.remove('disabled');
+            newPostButton.classList.add('enabled');
+            newPostButton.href = 'postitus.html'; // Make the button clickable
+        } else {
+            newPostButton.classList.add('disabled');
+        }
+
+        // Load posts from localStorage
+        const posts = JSON.parse(localStorage.getItem('posts')) || [];
+        if (posts.length === 0) {
+            feedContainer.innerHTML = "<p style='color: gray;'>Ole esimene postitaja!</p>";
+        } else {
+            posts.forEach((post, postIndex) => {
+                const postDiv = document.createElement('div');
+                postDiv.classList.add('post');
+                postDiv.innerHTML = `
+                    <p><strong>${post.username}</strong></p>
+                    ${post.image ? `<img src="${post.image}" alt="Post Image" style="max-width: 100%; height: auto; margin-bottom: 10px;">` : ''}
+                    <p><strong>${post.title}</strong></p>
+                    <p>${post.description}</p>
+
+                    <!-- Horizontal line separating the description from the comments -->
+                    <div class="comment-line"></div>
+
+                    <!-- Delete button for the post owner -->
+                    ${isLoggedIn && post.username === isLoggedIn ? ` 
+                        <button class="delete-post-button" onclick="deletePost(${postIndex})">
+                            <span class="cross">✖</span>
+                            Eemalda postitus
+                        </button>
+                    ` : ''}
+
+                    <!-- Comments will appear immediately after the horizontal line -->
+                    <div class="comment-list" id="comments-${postIndex}">
+                        ${post.comments && post.comments.length > 0 ? post.comments.map(comment => `
+                            <div class="comment">
+                                <strong>${comment.username}:</strong> ${comment.text}
+                            </div>
+                        `).join('') : ''}
+                    </div>
+
+                    <!-- Comment section with input and button below -->
+                    <div class="comment-section">
+                        ${isLoggedIn ? ` 
+                            <textarea class="comment-input" id="comment-input-${postIndex}" placeholder="Lisa kommentaar..."></textarea>
+                            <button class="postita-kommentaar" onclick="addComment(${postIndex})">Postita kommentaar</button>
+                        ` : ''}
+                    </div>
+                `;
+
+                feedContainer.appendChild(postDiv);
+            });
+        }
+
+        // Function to delete a post
+        function deletePost(postIndex) {
+            const posts = JSON.parse(localStorage.getItem('posts')) || [];
+            posts.splice(postIndex, 1); // Remove the post at the specified index
+            localStorage.setItem('posts', JSON.stringify(posts)); // Save updated posts
+
+            // Remove the post from the DOM
+            feedContainer.innerHTML = ''; // Clear the feed container
+            // Re-render all remaining posts
+            posts.forEach((post, postIndex) => {
+                const postDiv = document.createElement('div');
+                postDiv.classList.add('post');
+                postDiv.innerHTML = `
+                    <p><strong>${post.username}</strong></p>
+                    ${post.image ? `<img src="${post.image}" alt="Post Image" style="max-width: 100%; height: auto; margin-bottom: 10px;">` : ''}
+                    <p><strong>${post.title}</strong></p>
+                    <p>${post.description}</p>
+
+                    <!-- Horizontal line separating the description from the comments -->
+                    <div class="comment-line"></div>
+
+                    <!-- Delete button for the post owner -->
+                    ${isLoggedIn && post.username === isLoggedIn ? `
+                        <button class="delete-post-button" onclick="deletePost(${postIndex})">✖</button>
+                    ` : ''}
+
+                    <!-- Comments will appear immediately after the horizontal line -->
+                    <div class="comment-list" id="comments-${postIndex}">
+                        ${post.comments && post.comments.length > 0 ? post.comments.map(comment => `
+                            <div class="comment">
+                                <strong>${comment.username}:</strong> ${comment.text}
+                            </div>
+                        `).join('') : ''}
+                    </div>
+
+                    <!-- Comment section with input and button below -->
+                    <div class="comment-section">
+                        ${isLoggedIn ? ` 
+                            <textarea class="comment-input" id="comment-input-${postIndex}" placeholder="Lisa kommentaar..."></textarea>
+                            <button class="postita-kommentaar" onclick="addComment(${postIndex})">Postita kommentaar</button>
+                        ` : ''}
+                    </div>
+                `;
+
+                feedContainer.appendChild(postDiv);
+            });
+        }
+
+        // Function to add a comment
+        function addComment(postIndex) {
+            const commentText = document.getElementById(`comment-input-${postIndex}`).value;
+            if (commentText) {
+                const posts = JSON.parse(localStorage.getItem('posts')) || [];
+                
+                // Ensure the post has a comments array
+                posts[postIndex].comments = posts[postIndex].comments || [];
+
+                // Add the comment
+                posts[postIndex].comments.push({
+                    username: localStorage.getItem('loggedInUser'),
+                    text: commentText
+                });
+
+                // Save updated posts to localStorage
+                localStorage.setItem('posts', JSON.stringify(posts));
+
+                // Update the comment section in the DOM without reloading the page
+                const commentList = document.getElementById(`comments-${postIndex}`);
+                const newComment = document.createElement('div');
+                newComment.classList.add('comment');
+                newComment.innerHTML = `<strong>${localStorage.getItem('loggedInUser')}:</strong> ${commentText}`;
+                commentList.appendChild(newComment);
+
+                // Clear the input field after posting the comment
+                document.getElementById(`comment-input-${postIndex}`).value = '';
+            }
+        }
+    </script>
+</body>
+</html>

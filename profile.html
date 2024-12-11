@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="pildid/rmbfavicon.png" type="image/x-icon">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffe6f2;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .profile-container {
+            margin-top: 50px;
+        }
+
+        .username {
+            font-size: 36px;
+            color: #ff69b4;
+        }
+
+        .heart {
+            font-size: 40px;
+            color: red;
+        }
+
+        .message {
+            font-size: 24px;
+            color: #ff69b4;
+            margin-top: 20px;
+        }
+
+        .button {
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #ff85c2;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="username" id="username"></div>
+        <div class="message">Armastus on vaid ühe kliki kaugusel...</div>
+        <button class="button" onclick="location.href='index.html'">Tagasi</button>
+    </div>
+
+    <script>
+        // Get the logged-in username from localStorage
+        const loggedInUser = localStorage.getItem('loggedInUser');
+
+        if (loggedInUser) {
+            // Display the username with heart emoji
+            document.getElementById('username').innerText = loggedInUser + " ❤️";
+        } else {
+            // If no user is logged in, redirect to login page
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

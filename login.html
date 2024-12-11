@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="pildid/rmbfavicon.png" type="image/x-icon">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffe6f2;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-box {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .login-box h1 {
+            color: #ff69b4;
+            margin-bottom: 20px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .login-box button {
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-box button:hover {
+            background-color: #ff85c2;
+        }
+
+        .login-box .register-link {
+            margin-top: 10px;
+            display: block;
+            font-size: 14px;
+            color: #007BFF;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>Login</h1>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Kasutajanimi" required>
+            <input type="password" id="password" placeholder="Salasõna" required>
+            <button type="submit">Logi sisse</button>
+        </form>
+        <a href="register.html" class="register-link">Pole veel kontot? Registreeri siin</a>
+    </div>
+
+    <script>
+        let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const user = accounts.find(account => account.username === username && account.password === password);
+
+            if (user) {
+                localStorage.setItem('loggedInUser', username);  // Set the logged-in user
+                window.location.href = 'index.html';  // Redirect to the homepage
+            } else {
+                alert('Invalid username or password!');
+            }
+        });
+    </script>
+</body>
+</html>

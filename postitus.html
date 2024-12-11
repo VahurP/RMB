@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loo Postitus</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="pildid/rmbfavicon.png" type="image/x-icon">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffe6f2;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .form-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 50px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .button {
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #ff85c2;
+        }
+    </style>
+</head>
+<body>
+    <div id="top-right"></div> <!-- Top-right area for user icon and logout -->
+
+    <h1>Loo Postitus</h1>
+
+    <div class="form-container">
+        <input type="text" id="title" placeholder="Pealkiri" required><br>
+        <textarea id="description" placeholder="Kirjeldus" rows="5" required></textarea><br>
+        <input type="file" id="image" accept="image/*"><br>
+        <button class="button" onclick="submitPost()">Postita</button>
+    </div>
+
+    <script>
+        function submitPost() {
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const image = document.getElementById('image').files[0];
+            const username = localStorage.getItem('loggedInUser') || 'Anonymous';
+
+            if (title && description) {
+                const post = {
+                    username: username,
+                    title: title,
+                    description: description,
+                    image: null,
+                    comments: []
+                };
+
+                // If an image is selected, convert it to base64 and save it
+                if (image) {
+                    const reader = new FileReader();
+                    reader.onloadend = function () {
+                        post.image = reader.result; // Base64 image string
+                        
+                        // Save the post to localStorage
+                        const posts = JSON.parse(localStorage.getItem('posts')) || [];
+                        posts.push(post);
+                        localStorage.setItem('posts', JSON.stringify(posts));
+
+                        // Redirect back to postitused.html
+                        window.location.href = 'postitused.html';
+                    };
+                    reader.readAsDataURL(image); // Convert the image to base64
+                } else {
+                    // If no image is selected, save the post without an image
+                    const posts = JSON.parse(localStorage.getItem('posts')) || [];
+                    posts.push(post);
+                    localStorage.setItem('posts', JSON.stringify(posts));
+
+                    // Redirect back to postitused.html
+                    window.location.href = 'postitused.html';
+                }
+            } else {
+                alert("Palun täida kõik väljad!");
+            }
+        }
+    </script>
+</body>
+</html>
