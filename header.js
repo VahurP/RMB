@@ -1,3 +1,4 @@
+//Autor Roman Kurm
 function renderHeader() {
     const topRight = document.getElementById('top-right');
     const loggedInUser = localStorage.getItem('loggedInUser');
